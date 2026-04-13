@@ -1,0 +1,30 @@
+name: facebook/rocksdb/riscv64-qemu
+on: [push, pull_request, workflow_dispatch]
+permissions: {}
+jobs:
+  build-linux-riscv64-qemu:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4.1.0
+    - uses: uraimo/run-on-arch-action@v2
+      name: Build rocksdb on riscv64 (qemu-user)
+      with:
+        arch: riscv64
+        distro: ubuntu_latest
+        githubToken: ${{ github.token }}
+        install: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential \
+            libgflags-dev \
+            libsnappy-dev \
+            zlib1g-dev \
+            libbz2-dev \
+            liblz4-dev \
+            libzstd-dev \
+            ca-certificates
+        run: |
+          set -e
+          uname -a
+          nproc
+          make V=1 -j$(nproc) static_lib
